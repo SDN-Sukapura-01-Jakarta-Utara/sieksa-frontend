@@ -322,6 +322,130 @@ export class AbsensiService {
       throw error
     }
   }
+
+  /**
+   * Get pelatih by ekstrakurikuler (for filter)
+   */
+  async getPelatihForFilter(ekstrakurikulerId: number | null): Promise<PelatihListResponse> {
+    const apiBase = this.getApiBase()
+    
+    try {
+      return await $fetch<PelatihListResponse>(
+        `${apiBase}/api/sieksa/pelatih/get-pelatih`,
+        {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: {
+            search: {
+              nama: null,
+              ekstrakurikuler_id: ekstrakurikulerId,
+              status: 'active'
+            },
+            pagination: {
+              limit: 100,
+              page: 1
+            }
+          }
+        }
+      )
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
+
+  /**
+   * Get rekap absensi pelatih
+   */
+  async getRekapAbsensiPelatih(
+    pelatihId: number,
+    tahunPelajaranId: number,
+    ekstrakurikulerId: number,
+    bulan: number,
+    tahun: number
+  ): Promise<import('~/app/types/absensi').RekapAbsensiPelatihResponse> {
+    const apiBase = this.getApiBase()
+    
+    try {
+      return await $fetch<import('~/app/types/absensi').RekapAbsensiPelatihResponse>(
+        `${apiBase}/api/sieksa/absensi-ekstrakurikuler/get-absensi-pelatih`,
+        {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: {
+            pelatih_id: pelatihId,
+            tahun_pelajaran_id: tahunPelajaranId,
+            ekstrakurikuler_id: ekstrakurikulerId,
+            bulan: bulan,
+            tahun: tahun
+          }
+        }
+      )
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
+
+  /**
+   * Get kegiatan ekstrakurikuler
+   */
+  async getKegiatanEkskul(
+    ekstrakurikulerId: number,
+    tahunPelajaranId: number,
+    bulan: number,
+    tahun: number
+  ): Promise<import('~/app/types/absensi').KegiatanEkskulResponse> {
+    const apiBase = this.getApiBase()
+    
+    try {
+      return await $fetch<import('~/app/types/absensi').KegiatanEkskulResponse>(
+        `${apiBase}/api/sieksa/absensi-ekstrakurikuler/get-kegiatan-ekskul`,
+        {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: {
+            ekstrakurikuler_id: ekstrakurikulerId,
+            tahun_pelajaran_id: tahunPelajaranId,
+            bulan: bulan,
+            tahun: tahun
+          }
+        }
+      )
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
+
+  /**
+   * Update absensi pelatih
+   */
+  async updateAbsensiPelatih(
+    kegiatanEkskulId: number,
+    pelatihId: number,
+    status: boolean
+  ): Promise<import('~/app/types/absensi').UpdateAbsensiPelatihResponse> {
+    const apiBase = this.getApiBase()
+    
+    try {
+      return await $fetch<import('~/app/types/absensi').UpdateAbsensiPelatihResponse>(
+        `${apiBase}/api/sieksa/absensi-ekstrakurikuler/update-absensi-pelatih`,
+        {
+          method: 'POST',
+          headers: this.getHeaders(),
+          body: {
+            kegiatan_ekskul_id: kegiatanEkskulId,
+            pelatih_id: pelatihId,
+            status: status
+          }
+        }
+      )
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
 }
 
 // Singleton instance

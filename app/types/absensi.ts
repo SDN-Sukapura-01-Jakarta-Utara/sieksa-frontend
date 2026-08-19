@@ -189,3 +189,149 @@ export interface UpdateAbsensiSiswaResponse {
   message: string
   data: DetailAbsensiSiswa
 }
+
+// Types untuk Rekap Absensi Pelatih
+export interface KegiatanPelatih {
+  id: number
+  ekstrakurikuler_id: number
+  nama_ekstrakurikuler: string
+  tanggal_kegiatan: string
+  waktu_mulai: string
+  waktu_selesai: string
+  materi_kegiatan: string
+  foto_kegiatan: string | null
+  total_siswa_hadir: number
+  total_siswa_sakit: number
+  total_siswa_izin: number
+  total_siswa_alpa: number
+  is_hadir: boolean
+}
+
+export interface RekapAbsensiPelatihResponse {
+  message: string
+  data: {
+    pelatih_id: number
+    nama_pelatih: string
+    telepon: string
+    tahun_pelajaran_id: number
+    tahun_pelajaran: string
+    total_kegiatan: number
+    total_hadir: number
+    total_tidak_hadir: number
+    kegiatan: KegiatanPelatih[]
+  }
+}
+
+// Types untuk Kegiatan Ekstrakurikuler
+export interface PelatihKegiatan {
+  id: number
+  nama: string
+  telepon: string
+  foto_profil: string | null
+}
+
+export interface KegiatanEkskul {
+  id: number
+  tanggal_kegiatan: string
+  waktu_mulai: string
+  waktu_selesai: string
+  materi_kegiatan: string
+  foto_kegiatan: string | null // JSON string array or null
+  total_siswa: number
+  total_siswa_hadir: number
+  total_siswa_sakit: number
+  total_siswa_izin: number
+  total_siswa_alpa: number
+  total_pelatih_hadir: number
+  pelatih?: PelatihKegiatan[]
+  pelatih_hadir?: string[]
+}
+
+export interface KegiatanEkskulResponse {
+  message: string
+  data: {
+    ekstrakurikuler_id: number
+    nama_ekstrakurikuler: string
+    tahun_pelajaran_id: number
+    tahun_pelajaran: string
+    total_kegiatan: number
+    kegiatan: KegiatanEkskul[]
+  }
+}
+
+// Type alias for dokumentasi response (same structure)
+export type KegiatanDokumentasiResponse = KegiatanEkskulResponse
+
+// Types untuk Get Kegiatan By ID
+export interface AbsensiSiswaDetail {
+  id: number
+  peserta_didik_rombel_id: number
+  nama_siswa: string
+  nisn: string
+  nama_kelas: string
+  nama_rombel: string
+  status: 'hadir' | 'izin' | 'sakit' | 'alpa'
+  keterangan: string | null
+}
+
+export interface AbsensiPelatihDetail {
+  id: number
+  pelatih_id: number
+  nama_pelatih: string
+  telepon: string
+}
+
+export interface KegiatanDetail {
+  id: number
+  ekstrakurikuler_id: number
+  nama_ekstrakurikuler: string
+  tahun_pelajaran_id: number
+  tahun_pelajaran: string
+  tanggal_kegiatan: string
+  waktu_mulai: string
+  waktu_selesai: string
+  materi_kegiatan: string
+  foto_kegiatan: string[]
+  absensi_siswa: AbsensiSiswaDetail[]
+  absensi_pelatih: AbsensiPelatihDetail[]
+  total_siswa: number
+  total_siswa_hadir: number
+  total_siswa_sakit: number
+  total_siswa_izin: number
+  total_siswa_alpa: number
+  total_pelatih_hadir: number
+}
+
+export interface KegiatanByIdResponse {
+  message: string
+  data: KegiatanDetail
+}
+
+// Types untuk Update Kegiatan
+export interface UpdateKegiatanResponse {
+  message: string
+  data: {
+    id: number
+    tanggal_kegiatan: string
+    waktu_mulai: string
+    waktu_selesai: string
+    materi_kegiatan: string
+    foto_urls: string[]
+    total_foto: number
+    uploaded_foto: number
+    deleted_foto: number
+    message: string
+  }
+}
+
+// Types untuk Update Absensi Pelatih
+export interface UpdateAbsensiPelatihResponse {
+  message: string
+  data: {
+    kegiatan_ekskul_id: number
+    pelatih_id: number
+    nama_pelatih: string
+    is_hadir: boolean
+    message: string
+  }
+}

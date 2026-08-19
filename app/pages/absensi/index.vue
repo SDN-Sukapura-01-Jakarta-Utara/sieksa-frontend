@@ -84,9 +84,9 @@
         </NuxtLink>
 
         <!-- Rekap Absensi Pelatih Card -->
-        <button
-          @click="handleNavigate('rekap-absensi-pelatih')"
-          class="relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden text-left p-6 border border-gray-100 transform hover:-translate-y-2"
+        <NuxtLink
+          to="/absensi/rekap-pelatih"
+          class="relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 group overflow-hidden text-left p-6 border border-gray-100 transform hover:-translate-y-2 block"
         >
           <div class="relative z-10">
             <div class="flex items-start justify-between mb-4">
@@ -113,7 +113,7 @@
               </svg>
             </div>
           </div>
-        </button>
+        </NuxtLink>
       </div>
     </main>
 
@@ -130,23 +130,7 @@ definePageMeta({
 
 const userName = ref('Admin User')
 
-const handleNavigate = (menu: string) => {
-  const toast = useNuxtApp().$toast as any
-  
-  switch (menu) {
-    case 'buat-absensi':
-      router.push('/absensi/buat')
-      break
-    case 'rekap-absensi-siswa':
-      toast.info('Fitur Rekap Absensi Siswa dalam pengembangan')
-      // router.push('/absensi/rekap-siswa')
-      break
-    case 'rekap-absensi-pelatih':
-      toast.info('Fitur Rekap Absensi Pelatih dalam pengembangan')
-      // router.push('/absensi/rekap-pelatih')
-      break
-  }
-}
+
 
 onMounted(async () => {
   const { useAuthService } = await import('~/app/services/authService')
