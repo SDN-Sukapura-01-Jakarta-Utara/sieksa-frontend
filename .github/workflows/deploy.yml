@@ -1,86 +1,29 @@
-name: Deploy to Production
+name: Deploy sieksa-frontend to VPS
 
 on:
   push:
-    branches:
-      - main  # atau master, sesuaikan dengan branch production Anda
-  workflow_dispatch:  # Allows manual trigger
+    branches: [ main ]  # atau master, sesuaikan dengan branch Anda
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v3
+      
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
         with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        env:
-          NUXT_PUBLIC_API_BASE_URL: ${{ secrets.NUXT_PUBLIC_API_BASE_URL }}
-          NUXT_PUBLIC_APP_NAME: 'SIEKSA'
-        run: npm run build
-
-      - name: Create deployment package
-        run: |
-          mkdir deploy
-          cp -r .output deploy/
-          cp ecosystem.config.cjs deploy/
-          cp package.json deploy/
-          cp package-lock.json deploy/
-          tar -czf deploy.tar.gz -C deploy .
-
-      - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "deploy.tar.gz"
-          target: "/tmp"
-
-      - name: Deploy on server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            # Create deployment directory if not exists
-            mkdir -p ${{ secrets.DEPLOY_PATH }}
-            
-            # Extract files
-            cd ${{ secrets.DEPLOY_PATH }}
-            tar -xzf /tmp/deploy.tar.gz
-            rm /tmp/deploy.tar.gz
-            
-            # Install production dependencies (if needed)
-            npm ci --omit=dev
-            
-            # Restart application with PM2
-            pm2 restart ecosystem.config.cjs --update-env
-            pm2 save
-            
-            # Setup PM2 startup (first time only, but safe to run multiple times)
-            sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ${{ secrets.SERVER_USER }} --hp /home/${{ secrets.SERVER_USER }}
-            
-            echo "Deployment completed successfully!"
+            cd /var/www/sieksa-frontend
+            git pull origin main
+            rm -rf node_modules .nuxt .output
+            npm install
+            npm run build
+            pm2 reload ecosystem.config.cjs --env production
 
-      - name: Notify deployment status
-        if: always()
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            echo "✅ Deployment successful!"
-          else
-            echo "❌ Deployment failed!"
-          fi
