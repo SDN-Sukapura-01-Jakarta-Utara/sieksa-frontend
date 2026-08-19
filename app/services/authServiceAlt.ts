@@ -1,13 +1,20 @@
 import type { LoginRequest, LoginResponse } from '~/app/types/auth'
 
 export class AuthServiceAlt {
+  private apiBase: string
+
+  constructor() {
+    this.apiBase = useRuntimeConfig().public.apiBase as string
+  }
+
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
+      const url = `${this.apiBase}/api/sieksa/auth/login`
       console.log('=== ALTERNATIVE LOGIN REQUEST ===')
-      console.log('URL:', 'http://localhost:3000/api/sieksa/auth/login')
+      console.log('URL:', url)
       console.log('Body:', JSON.stringify(credentials))
       
-      const response = await fetch('http://localhost:3000/api/sieksa/auth/login', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
