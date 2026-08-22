@@ -15,7 +15,7 @@
       </div>
 
       <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
           <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Ekstrakurikuler</label>
             <select v-model="filter.ekstrakurikuler_id" @change="onFilterChange" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
@@ -40,6 +40,78 @@
               <option value="">Semua Rombel</option>
               <option v-for="rombel in rombelList" :key="rombel.id" :value="rombel.id">{{ rombel.name }}</option>
             </select>
+          </div>
+          <!-- Desktop: Excel Button -->
+          <div v-if="filter.ekstrakurikuler_id && filter.tahun_pelajaran_id && !isLoading" class="hidden lg:block">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">&nbsp;</label>
+            <button 
+              @click="downloadExcel" 
+              :disabled="isDownloading"
+              class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
+            >
+              <svg v-if="!isDownloading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <svg v-else class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span class="hidden xl:inline">{{ isDownloading ? 'Mengunduh...' : 'Download Excel' }}</span>
+              <span class="xl:hidden">{{ isDownloading ? '...' : 'Excel' }}</span>
+            </button>
+          </div>
+          <!-- Desktop: PDF Button -->
+          <div v-if="filter.ekstrakurikuler_id && filter.tahun_pelajaran_id && !isLoading" class="hidden lg:block">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">&nbsp;</label>
+            <button 
+              @click="downloadPdf" 
+              :disabled="isDownloadingPdf"
+              class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
+            >
+              <svg v-if="!isDownloadingPdf" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              <svg v-else class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span class="hidden xl:inline">{{ isDownloadingPdf ? 'Mengunduh...' : 'Download PDF' }}</span>
+              <span class="xl:hidden">{{ isDownloadingPdf ? '...' : 'PDF' }}</span>
+            </button>
+          </div>
+          <!-- Mobile/Tablet: Download buttons side by side -->
+          <div v-if="filter.ekstrakurikuler_id && filter.tahun_pelajaran_id && !isLoading" class="md:col-span-2 lg:hidden">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">&nbsp;</label>
+            <div class="flex gap-2">
+              <button 
+                @click="downloadExcel" 
+                :disabled="isDownloading"
+                class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
+              >
+                <svg v-if="!isDownloading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <svg v-else class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {{ isDownloading ? 'Mengunduh...' : 'Download Excel' }}
+              </button>
+              <button 
+                @click="downloadPdf" 
+                :disabled="isDownloadingPdf"
+                class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white rounded-lg font-semibold transition shadow-lg hover:shadow-xl"
+              >
+                <svg v-if="!isDownloadingPdf" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <svg v-else class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {{ isDownloadingPdf ? 'Mengunduh...' : 'Download PDF' }}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -81,10 +153,14 @@
                 <th rowspan="2" class="px-4 py-3 text-left text-xs font-bold text-white uppercase border-r border-purple-500 sticky left-12 bg-purple-600 z-20">Nama</th>
                 <th rowspan="2" class="px-4 py-3 text-left text-xs font-bold text-white uppercase border-r border-purple-500 bg-purple-600">NIS</th>
                 <th rowspan="2" class="px-4 py-3 text-left text-xs font-bold text-white uppercase border-r border-purple-500 bg-purple-600">Rombel</th>
-                <th :colspan="datesInMonth.length" class="px-4 py-3 text-center text-sm font-bold text-white uppercase bg-purple-600">{{ currentMonthYear }}</th>
+                <th v-for="pertemuan in pertemuanList" :key="`p-${pertemuan.pertemuan}`" class="px-3 border-r border-purple-400 min-w-[70px] bg-purple-600 border-b border-purple-400">
+                  <div class="py-2 text-xs font-bold text-white">P{{ pertemuan.pertemuan }}</div>
+                </th>
               </tr>
               <tr class="bg-gradient-to-r from-purple-500 to-purple-600">
-                <th v-for="date in datesInMonth" :key="date" class="px-3 py-2 text-center text-xs font-semibold text-white border-r border-purple-400 min-w-[40px]">{{ date }}</th>
+                <th v-for="pertemuan in pertemuanList" :key="`t-${pertemuan.pertemuan}`" class="px-3 py-2 text-center text-xs font-semibold text-purple-100 border-r border-purple-400 min-w-[70px]">
+                  {{ pertemuan.tanggal ? pertemuan.tanggal : '-' }}
+                </th>
               </tr>
             </thead>
             <tbody class="bg-white">
@@ -93,22 +169,22 @@
                 <td class="px-4 py-3 text-sm text-gray-900 font-semibold border-r border-gray-300 sticky left-12 bg-white">{{ siswa.nama }}</td>
                 <td class="px-4 py-3 text-sm text-gray-700 border-r border-gray-300">{{ siswa.nis }}</td>
                 <td class="px-4 py-3 text-sm text-gray-700 border-r border-gray-300">{{ siswa.nama_rombel }}</td>
-                <td v-for="date in datesInMonth" :key="date" :class="[
-                  'text-center border-r border-gray-300 min-w-[40px]',
-                  getAbsensiStatus(siswa.peserta_didik_rombel_id, date) ? 'cursor-pointer hover:opacity-80 transition' : '',
-                  getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'hadir' ? 'bg-green-100' :
-                  getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'sakit' ? 'bg-yellow-100' :
-                  getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'izin' ? 'bg-blue-100' :
-                  getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'alpa' ? 'bg-red-100' : 'bg-white'
-                ]" @click="getAbsensiStatus(siswa.peserta_didik_rombel_id, date) ? openDetailAbsensi(siswa.peserta_didik_rombel_id, date) : null">
-                  <div v-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'hadir'" class="flex items-center justify-center py-2">
+                <td v-for="pertemuan in pertemuanList" :key="`absen-${pertemuan.pertemuan}`" :class="[
+                  'text-center border-r border-gray-300 min-w-[70px]',
+                  getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) ? 'cursor-pointer hover:opacity-80 transition' : '',
+                  getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'hadir' ? 'bg-green-100' :
+                  getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'sakit' ? 'bg-yellow-100' :
+                  getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'izin' ? 'bg-blue-100' :
+                  getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'alpa' ? 'bg-red-100' : 'bg-white'
+                ]" @click="getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) ? openDetailAbsensi(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) : null">
+                  <div v-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'hadir'" class="flex items-center justify-center py-2">
                     <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                   </div>
-                  <div v-else-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'sakit'" class="text-yellow-700 font-bold text-sm py-2">S</div>
-                  <div v-else-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'izin'" class="text-blue-700 font-bold text-sm py-2">I</div>
-                  <div v-else-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, date) === 'alpa'" class="text-red-700 font-bold text-sm py-2">A</div>
+                  <div v-else-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'sakit'" class="text-yellow-700 font-bold text-sm py-2">S</div>
+                  <div v-else-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'izin'" class="text-blue-700 font-bold text-sm py-2">I</div>
+                  <div v-else-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'alpa'" class="text-red-700 font-bold text-sm py-2">A</div>
                   <div v-else class="text-gray-300 text-sm py-2">-</div>
                 </td>
               </tr>
@@ -382,6 +458,8 @@ definePageMeta({
 
 const userName = ref('Admin User')
 const isLoading = ref(false)
+const isDownloading = ref(false)
+const isDownloadingPdf = ref(false)
 
 const filter = ref({
   ekstrakurikuler_id: '',
@@ -413,9 +491,37 @@ const currentMonthYear = computed(() => {
   return `${monthNames[currentMonth.value - 1]} ${currentYear.value}`
 })
 
-const datesInMonth = computed(() => {
-  const daysInMonth = new Date(currentYear.value, currentMonth.value, 0).getDate()
-  return Array.from({ length: daysInMonth }, (_, i) => i + 1)
+// Menghitung pertemuan berdasarkan tanggal kegiatan yang ada
+const pertemuanList = computed(() => {
+  if (!absensiData.value || !absensiData.value.kegiatan) {
+    return Array.from({ length: 5 }, (_, i) => ({ pertemuan: i + 1, tanggal: null, tanggalKegiatan: null }))
+  }
+  
+  // Ambil semua tanggal kegiatan dan sort berdasarkan tanggal
+  const sortedKegiatan = [...absensiData.value.kegiatan].sort((a, b) => {
+    return new Date(a.tanggal_kegiatan).getTime() - new Date(b.tanggal_kegiatan).getTime()
+  })
+  
+  // Buat array pertemuan dengan maksimal yang ada atau minimal 5
+  const maxPertemuan = Math.max(5, sortedKegiatan.length)
+  const pertemuanData = Array.from({ length: maxPertemuan }, (_, i) => {
+    const kegiatan = sortedKegiatan[i]
+    if (kegiatan) {
+      const date = new Date(kegiatan.tanggal_kegiatan)
+      return {
+        pertemuan: i + 1,
+        tanggal: date.getDate(),
+        tanggalKegiatan: kegiatan.tanggal_kegiatan
+      }
+    }
+    return {
+      pertemuan: i + 1,
+      tanggal: null,
+      tanggalKegiatan: null
+    }
+  })
+  
+  return pertemuanData
 })
 
 onMounted(async () => {
@@ -451,6 +557,12 @@ async function loadTahunPelajaran() {
     const absensiService = useAbsensiService()
     const response = await absensiService.getTahunPelajaranAll()
     tahunPelajaranList.value = response.data
+    
+    // Set default ke tahun pelajaran yang active
+    const activeTahunPelajaran = response.data.find((tp: TahunPelajaran) => tp.status === 'active')
+    if (activeTahunPelajaran) {
+      filter.value.tahun_pelajaran_id = String(activeTahunPelajaran.id)
+    }
   } catch (error: any) {
     toast.error(error.data?.error || 'Gagal memuat data tahun pelajaran')
   }
@@ -514,32 +626,28 @@ async function loadAbsensiData() {
   }
 }
 
-function getAbsensiStatus(pesertaDidikRombelId: number, tanggal: number): string | null {
-  if (!absensiData.value || !absensiData.value.kegiatan) return null
+function getAbsensiStatus(pesertaDidikRombelId: number, tanggalKegiatan: string | null): string | null {
+  if (!absensiData.value || !absensiData.value.kegiatan || !tanggalKegiatan) return null
   
-  const tanggalStr = `${currentYear.value}-${String(currentMonth.value).padStart(2, '0')}-${String(tanggal).padStart(2, '0')}`
-  
-  const kegiatan = absensiData.value.kegiatan.find((k: any) => k.tanggal_kegiatan === tanggalStr)
+  const kegiatan = absensiData.value.kegiatan.find((k: any) => k.tanggal_kegiatan === tanggalKegiatan)
   if (!kegiatan) return null
   
   const absensi = kegiatan.absensi_siswa.find((a: any) => a.peserta_didik_rombel_id === pesertaDidikRombelId)
   return absensi ? absensi.status : null
 }
 
-function getAbsensiId(pesertaDidikRombelId: number, tanggal: number): number | null {
-  if (!absensiData.value || !absensiData.value.kegiatan) return null
+function getAbsensiId(pesertaDidikRombelId: number, tanggalKegiatan: string | null): number | null {
+  if (!absensiData.value || !absensiData.value.kegiatan || !tanggalKegiatan) return null
   
-  const tanggalStr = `${currentYear.value}-${String(currentMonth.value).padStart(2, '0')}-${String(tanggal).padStart(2, '0')}`
-  
-  const kegiatan = absensiData.value.kegiatan.find((k: any) => k.tanggal_kegiatan === tanggalStr)
+  const kegiatan = absensiData.value.kegiatan.find((k: any) => k.tanggal_kegiatan === tanggalKegiatan)
   if (!kegiatan) return null
   
   const absensi = kegiatan.absensi_siswa.find((a: any) => a.peserta_didik_rombel_id === pesertaDidikRombelId)
   return absensi ? absensi.id : null
 }
 
-async function openDetailAbsensi(pesertaDidikRombelId: number, tanggal: number) {
-  const absensiId = getAbsensiId(pesertaDidikRombelId, tanggal)
+async function openDetailAbsensi(pesertaDidikRombelId: number, tanggalKegiatan: string | null) {
+  const absensiId = getAbsensiId(pesertaDidikRombelId, tanggalKegiatan)
   if (!absensiId) return
   
   isLoadingDetail.value = true
@@ -638,6 +746,90 @@ function nextMonth() {
     currentMonth.value++
   }
   loadAbsensiData()
+}
+
+async function downloadExcel() {
+  if (!filter.value.ekstrakurikuler_id || !filter.value.tahun_pelajaran_id) {
+    toast.error('Pilih ekstrakurikuler dan tahun pelajaran terlebih dahulu')
+    return
+  }
+
+  isDownloading.value = true
+  try {
+    const { useAbsensiService } = await import('~/app/services/absensiService')
+    const absensiService = useAbsensiService()
+    
+    const blob = await absensiService.downloadExcelAbsensiSiswa(
+      Number(filter.value.ekstrakurikuler_id),
+      Number(filter.value.tahun_pelajaran_id),
+      currentMonth.value,
+      currentYear.value
+    )
+    
+    // Create download link
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    
+    // Generate filename
+    const ekskulName = ekstrakurikulerList.value.find(e => e.id === Number(filter.value.ekstrakurikuler_id))?.name || 'Ekskul'
+    const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][currentMonth.value - 1]
+    link.download = `Absensi_${ekskulName}_${monthName}_${currentYear.value}.xlsx`
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    toast.success('File excel berhasil diunduh')
+  } catch (error: any) {
+    console.error('Error downloading excel:', error)
+    toast.error(error.data?.error || 'Gagal mengunduh file excel')
+  } finally {
+    isDownloading.value = false
+  }
+}
+
+async function downloadPdf() {
+  if (!filter.value.ekstrakurikuler_id || !filter.value.tahun_pelajaran_id) {
+    toast.error('Pilih ekstrakurikuler dan tahun pelajaran terlebih dahulu')
+    return
+  }
+
+  isDownloadingPdf.value = true
+  try {
+    const { useAbsensiService } = await import('~/app/services/absensiService')
+    const absensiService = useAbsensiService()
+    
+    const blob = await absensiService.downloadPdfAbsensiSiswa(
+      Number(filter.value.ekstrakurikuler_id),
+      Number(filter.value.tahun_pelajaran_id),
+      currentMonth.value,
+      currentYear.value
+    )
+    
+    // Create download link
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    
+    // Generate filename
+    const ekskulName = ekstrakurikulerList.value.find(e => e.id === Number(filter.value.ekstrakurikuler_id))?.name || 'Ekskul'
+    const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][currentMonth.value - 1]
+    link.download = `Absensi_${ekskulName}_${monthName}_${currentYear.value}.pdf`
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    toast.success('File PDF berhasil diunduh')
+  } catch (error: any) {
+    console.error('Error downloading PDF:', error)
+    toast.error(error.data?.error || 'Gagal mengunduh file PDF')
+  } finally {
+    isDownloadingPdf.value = false
+  }
 }
 
 useHead({

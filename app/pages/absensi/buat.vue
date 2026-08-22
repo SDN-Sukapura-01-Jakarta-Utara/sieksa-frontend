@@ -181,6 +181,12 @@ async function loadTahunPelajaran() {
     const absensiService = useAbsensiService()
     const response = await absensiService.getTahunPelajaranActive()
     tahunPelajaranList.value = response.data
+    
+    // Set default ke tahun pelajaran yang active
+    const activeTahunPelajaran = response.data.find((tp: TahunPelajaran) => tp.status === 'active')
+    if (activeTahunPelajaran) {
+      form.value.tahun_pelajaran_id = String(activeTahunPelajaran.id)
+    }
   } catch (error: any) {
     toast.error(error.data?.error || 'Gagal memuat data tahun pelajaran')
   }

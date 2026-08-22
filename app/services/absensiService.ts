@@ -446,6 +446,178 @@ export class AbsensiService {
       throw error
     }
   }
+
+  /**
+   * Download excel absensi siswa
+   */
+  async downloadExcelAbsensiSiswa(
+    ekstrakurikulerId: number,
+    tahunPelajaranId: number,
+    bulan: number,
+    tahun: number
+  ): Promise<Blob> {
+    const apiBase = this.getApiBase()
+    const token = this.getAuthToken()
+    
+    try {
+      const response = await fetch(
+        `${apiBase}/api/sieksa/absensi-ekstrakurikuler/download-excel-absensi-siswa`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            ekstrakurikuler_id: ekstrakurikulerId,
+            tahun_pelajaran_id: tahunPelajaranId,
+            bulan: bulan,
+            tahun: tahun
+          })
+        }
+      )
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw errorData
+      }
+      
+      return await response.blob()
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
+
+  /**
+   * Download PDF absensi siswa
+   */
+  async downloadPdfAbsensiSiswa(
+    ekstrakurikulerId: number,
+    tahunPelajaranId: number,
+    bulan: number,
+    tahun: number
+  ): Promise<Blob> {
+    const apiBase = this.getApiBase()
+    const token = this.getAuthToken()
+    
+    try {
+      const response = await fetch(
+        `${apiBase}/api/sieksa/absensi-ekstrakurikuler/download-pdf-absensi-siswa`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            ekstrakurikuler_id: ekstrakurikulerId,
+            tahun_pelajaran_id: tahunPelajaranId,
+            bulan: bulan,
+            tahun: tahun
+          })
+        }
+      )
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw errorData
+      }
+      
+      return await response.blob()
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
+
+  /**
+   * Download excel absensi pelatih
+   */
+  async downloadExcelAbsensiPelatih(
+    tahunPelajaranId: number,
+    ekstrakurikulerId: number,
+    pelatihId: number,
+    bulan: number,
+    tahun: number
+  ): Promise<Blob> {
+    const apiBase = this.getApiBase()
+    const token = this.getAuthToken()
+    
+    try {
+      const response = await fetch(
+        `${apiBase}/api/sieksa/absensi-ekstrakurikuler/download-excel-absensi-pelatih`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            tahun_pelajaran_id: tahunPelajaranId,
+            ekstrakurikuler_id: ekstrakurikulerId,
+            pelatih_id: pelatihId,
+            bulan: bulan,
+            tahun: tahun
+          })
+        }
+      )
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw errorData
+      }
+      
+      return await response.blob()
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
+
+  /**
+   * Download PDF absensi pelatih
+   */
+  async downloadPdfAbsensiPelatih(
+    tahunPelajaranId: number,
+    ekstrakurikulerId: number,
+    pelatihId: number,
+    bulan: number,
+    tahun: number
+  ): Promise<Blob> {
+    const apiBase = this.getApiBase()
+    const token = this.getAuthToken()
+    
+    try {
+      const response = await fetch(
+        `${apiBase}/api/sieksa/absensi-ekstrakurikuler/download-pdf-absensi-pelatih`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            tahun_pelajaran_id: tahunPelajaranId,
+            ekstrakurikuler_id: ekstrakurikulerId,
+            pelatih_id: pelatihId,
+            bulan: bulan,
+            tahun: tahun
+          })
+        }
+      )
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw errorData
+      }
+      
+      return await response.blob()
+    } catch (error: any) {
+      await handleAuthError(error)
+      throw error
+    }
+  }
 }
 
 // Singleton instance

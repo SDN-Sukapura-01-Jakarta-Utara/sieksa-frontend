@@ -19,6 +19,7 @@
           <NuxtLink
             to="/dashboard"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white hover:bg-white/20 transition font-semibold"
+            active-class="bg-white/30 shadow-lg"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -28,6 +29,7 @@
           <NuxtLink
             to="/video-tutorial"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white hover:bg-white/20 transition font-semibold"
+            active-class="bg-white/30 shadow-lg"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -38,21 +40,24 @@
           <NuxtLink
             to="/buku-panduan"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white hover:bg-white/20 transition font-semibold"
+            active-class="bg-white/30 shadow-lg"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
             Buku Panduan
           </NuxtLink>
-          <NuxtLink
-            to="/bantuan"
+          <a
+            href="https://wa.me/628889125991?text=Halo%2C%20saya%20pelatih%20ekskul%20ingin%20bertanya%20terkait%20"
+            target="_blank"
+            rel="noopener noreferrer"
             class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white hover:bg-white/20 transition font-semibold"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Bantuan
-          </NuxtLink>
+          </a>
         </div>
 
         <!-- User & Logout -->
@@ -126,6 +131,7 @@
           <NuxtLink
             to="/dashboard"
             class="flex items-center gap-3 text-white hover:bg-white/20 px-4 py-3 rounded-xl transition font-semibold group"
+            active-class="bg-white/30 shadow-lg"
             @click="toggleSidebar"
           >
             <svg class="w-5 h-5 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,6 +142,7 @@
           <NuxtLink
             to="/video-tutorial"
             class="flex items-center gap-3 text-white hover:bg-white/20 px-4 py-3 rounded-xl transition font-semibold group"
+            active-class="bg-white/30 shadow-lg"
             @click="toggleSidebar"
           >
             <svg class="w-5 h-5 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,6 +154,7 @@
           <NuxtLink
             to="/buku-panduan"
             class="flex items-center gap-3 text-white hover:bg-white/20 px-4 py-3 rounded-xl transition font-semibold group"
+            active-class="bg-white/30 shadow-lg"
             @click="toggleSidebar"
           >
             <svg class="w-5 h-5 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,8 +162,10 @@
             </svg>
             Buku Panduan
           </NuxtLink>
-          <NuxtLink
-            to="/bantuan"
+          <a
+            href="https://wa.me/628889125991?text=Halo%2C%20saya%20pelatih%20ekskul%20ingin%20bertanya%20terkait%20"
+            target="_blank"
+            rel="noopener noreferrer"
             class="flex items-center gap-3 text-white hover:bg-white/20 px-4 py-3 rounded-xl transition font-semibold group"
             @click="toggleSidebar"
           >
@@ -163,7 +173,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Bantuan
-          </NuxtLink>
+          </a>
         </div>
 
         <button
