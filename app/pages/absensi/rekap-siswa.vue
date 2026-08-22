@@ -171,12 +171,12 @@
                 <td class="px-4 py-3 text-sm text-gray-700 border-r border-gray-300">{{ siswa.nama_rombel }}</td>
                 <td v-for="pertemuan in pertemuanList" :key="`absen-${pertemuan.pertemuan}`" :class="[
                   'text-center border-r border-gray-300 min-w-[70px]',
-                  getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) ? 'cursor-pointer hover:opacity-80 transition' : '',
+                  pertemuan.tanggalKegiatan ? 'cursor-pointer hover:opacity-80 transition' : '',
                   getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'hadir' ? 'bg-green-100' :
                   getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'sakit' ? 'bg-yellow-100' :
                   getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'izin' ? 'bg-blue-100' :
                   getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'alpa' ? 'bg-red-100' : 'bg-white'
-                ]" @click="getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) ? openDetailAbsensi(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) : null">
+                ]" @click="pertemuan.tanggalKegiatan ? openDetailAbsensi(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) : null">
                   <div v-if="getAbsensiStatus(siswa.peserta_didik_rombel_id, pertemuan.tanggalKegiatan) === 'hadir'" class="flex items-center justify-center py-2">
                     <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -322,7 +322,7 @@
                           </div>
                           <h4 class="text-sm font-bold text-gray-800">Data Siswa & Status</h4>
                         </div>
-                        <button v-if="!isEditMode" @click="enableEditMode" class="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-gray-900 text-xs font-semibold rounded-lg transition-colors">
+                        <button v-if="!isEditMode && detailAbsensi.id" @click="enableEditMode" class="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-gray-900 text-xs font-semibold rounded-lg transition-colors">
                           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
@@ -370,7 +370,7 @@
                             </svg>
                             <label class="text-xs text-gray-600 font-bold uppercase">Status Kehadiran</label>
                           </div>
-                          <div v-if="!isEditMode">
+                          <div v-if="!isEditMode && detailAbsensi.status">
                             <span :class="[
                               'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold shadow-md',
                               detailAbsensi.status === 'hadir' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' :
@@ -386,6 +386,9 @@
                               </svg>
                               {{ detailAbsensi.status.charAt(0).toUpperCase() + detailAbsensi.status.slice(1) }}
                             </span>
+                          </div>
+                          <div v-else-if="!isEditMode && !detailAbsensi.status">
+                            <p class="text-gray-400 text-xs italic">Belum ada status kehadiran</p>
                           </div>
                           <div v-else>
                             <select v-model="editForm.status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
@@ -425,9 +428,9 @@
                               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            {{ isSaving ? 'Menyimpan...' : 'Simpan Perubahan' }}
+                            {{ isSaving ? 'Menyimpan...' : (detailAbsensi.id ? 'Simpan Perubahan' : 'Tambah Kehadiran') }}
                           </button>
-                          <button @click="cancelEdit" :disabled="isSaving" class="px-4 py-2.5 bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg transition-colors">
+                          <button v-if="detailAbsensi.id" @click="cancelEdit" :disabled="isSaving" class="px-4 py-2.5 bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg transition-colors">
                             Batal
                           </button>
                         </div>
@@ -647,8 +650,9 @@ function getAbsensiId(pesertaDidikRombelId: number, tanggalKegiatan: string | nu
 }
 
 async function openDetailAbsensi(pesertaDidikRombelId: number, tanggalKegiatan: string | null) {
+  if (!tanggalKegiatan) return
+  
   const absensiId = getAbsensiId(pesertaDidikRombelId, tanggalKegiatan)
-  if (!absensiId) return
   
   isLoadingDetail.value = true
   showDetailModal.value = true
@@ -656,13 +660,51 @@ async function openDetailAbsensi(pesertaDidikRombelId: number, tanggalKegiatan: 
   isEditMode.value = false
   
   try {
-    const { useAbsensiService } = await import('~/app/services/absensiService')
-    const absensiService = useAbsensiService()
-    const response = await absensiService.getDetailAbsensiSiswa(absensiId)
-    detailAbsensi.value = response.data
-    editForm.value = {
-      status: response.data.status,
-      keterangan: response.data.keterangan || ''
+    if (absensiId) {
+      // Data absensi sudah ada, load detail
+      const { useAbsensiService } = await import('~/app/services/absensiService')
+      const absensiService = useAbsensiService()
+      const response = await absensiService.getDetailAbsensiSiswa(absensiId)
+      detailAbsensi.value = response.data
+      editForm.value = {
+        status: response.data.status,
+        keterangan: response.data.keterangan || ''
+      }
+    } else {
+      // Data absensi belum ada, buat detail dummy untuk insert
+      const kegiatan = absensiData.value.kegiatan.find((k: any) => k.tanggal_kegiatan === tanggalKegiatan)
+      const siswa = siswaAbsensiList.value.find((s: any) => s.peserta_didik_rombel_id === pesertaDidikRombelId)
+      
+      if (!kegiatan || !siswa) {
+        toast.error('Data tidak ditemukan')
+        showDetailModal.value = false
+        return
+      }
+      
+      detailAbsensi.value = {
+        id: null,
+        kegiatan_ekskul_id: kegiatan.id,
+        peserta_didik_rombel_id: pesertaDidikRombelId,
+        status: '',
+        keterangan: '',
+        nama_ekstrakurikuler: absensiData.value.nama_ekstrakurikuler,
+        tahun_pelajaran: absensiData.value.tahun_pelajaran,
+        tanggal_kegiatan: kegiatan.tanggal_kegiatan,
+        waktu_mulai: kegiatan.waktu_mulai,
+        waktu_selesai: kegiatan.waktu_selesai,
+        materi_kegiatan: kegiatan.materi_kegiatan,
+        nama_siswa: siswa.nama,
+        nisn: siswa.nisn,
+        nama_rombel: siswa.nama_rombel
+      }
+      
+      editForm.value = {
+        status: 'hadir',
+        keterangan: ''
+      }
+      
+      // Langsung masuk ke mode edit untuk insert
+      isEditMode.value = true
     }
   } catch (error: any) {
     toast.error(error.data?.error || 'Gagal memuat detail absensi')
@@ -704,13 +746,26 @@ async function saveAbsensi() {
   try {
     const { useAbsensiService } = await import('~/app/services/absensiService')
     const absensiService = useAbsensiService()
-    const response = await absensiService.updateAbsensiSiswa(
-      detailAbsensi.value.id,
-      editForm.value.status,
-      editForm.value.keterangan
-    )
     
-    toast.success('Absensi berhasil diperbarui')
+    if (detailAbsensi.value.id) {
+      // Update data absensi yang sudah ada
+      await absensiService.updateAbsensiSiswa(
+        detailAbsensi.value.id,
+        editForm.value.status,
+        editForm.value.keterangan
+      )
+      toast.success('Absensi berhasil diperbarui')
+    } else {
+      // Insert data absensi baru
+      await absensiService.updateAbsensiSiswa(
+        null,
+        editForm.value.status,
+        editForm.value.keterangan,
+        detailAbsensi.value.kegiatan_ekskul_id,
+        detailAbsensi.value.peserta_didik_rombel_id
+      )
+      toast.success('Absensi berhasil ditambahkan')
+    }
     
     // Reload absensi data
     await loadAbsensiData()
@@ -718,7 +773,7 @@ async function saveAbsensi() {
     // Close modal
     closeDetailModal()
   } catch (error: any) {
-    toast.error(error.data?.error || 'Gagal memperbarui absensi')
+    toast.error(error.data?.error || 'Gagal menyimpan absensi')
   } finally {
     isSaving.value = false
   }

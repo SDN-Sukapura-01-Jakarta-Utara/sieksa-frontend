@@ -299,22 +299,36 @@ export class AbsensiService {
   }
 
   /**
-   * Update absensi siswa
+   * Update absensi siswa (supports both update and insert)
    */
-  async updateAbsensiSiswa(id: number, status: string, keterangan: string): Promise<import('~/app/types/absensi').UpdateAbsensiSiswaResponse> {
+  async updateAbsensiSiswa(
+    id: number | null, 
+    status: string, 
+    keterangan: string,
+    kegiatanEkskulId?: number,
+    pesertaDidikRombelId?: number
+  ): Promise<import('~/app/types/absensi').UpdateAbsensiSiswaResponse> {
     const apiBase = this.getApiBase()
     
     try {
+      const body: any = {
+        id: id,
+        status: status,
+        keterangan: keterangan
+      }
+      
+      // Jika insert data baru (id === null), tambahkan parameter wajib
+      if (id === null && kegiatanEkskulId && pesertaDidikRombelId) {
+        body.kegiatan_ekskul_id = kegiatanEkskulId
+        body.peserta_didik_rombel_id = pesertaDidikRombelId
+      }
+      
       return await $fetch<import('~/app/types/absensi').UpdateAbsensiSiswaResponse>(
         `${apiBase}/api/sieksa/absensi-ekstrakurikuler/update-absensi-siswa`,
         {
           method: 'POST',
           headers: this.getHeaders(),
-          body: {
-            id: id,
-            status: status,
-            keterangan: keterangan
-          }
+          body: body
         }
       )
     } catch (error: any) {
